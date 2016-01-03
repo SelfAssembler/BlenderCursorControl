@@ -158,7 +158,7 @@ class VIEW3D_OT_cursor_to_sl_mirror(bpy.types.Operator):
         obj = context.active_object
         cc = context.scene.cursor_control
         cc.hideLinexChoice()
-        
+
         if obj==None or obj.data.total_vert_sel==0:
             if hasattr(context.scene, "cursor_memory"):
                 cm = context.scene.cursor_memory
@@ -181,25 +181,25 @@ class VIEW3D_OT_cursor_to_sl_mirror(bpy.types.Operator):
             p = G3.closestP2L(c, Vector(sf[0].co), Vector(sf[1].co))
             self.mirror(cc, mat*p)
             return {'FINISHED'}
-            
+
         if obj.data.total_vert_sel==3:
             sf = [f for f in obj.data.vertices if f.select == 1]
             v0 = Vector(sf[0].co)
             v1 = Vector(sf[1].co)
             v2 = Vector(sf[2].co)
             normal = (v1-v0).cross(v2-v0)
-            normal.normalize();            
+            normal.normalize();
             p = G3.closestP2S(c, v0, normal)
             self.mirror(cc, mat*p)
             return {'FINISHED'}
-              
+
         if obj.data.total_face_sel==1:
-            sf = [f for f in obj.data.faces if f.select == 1]
+            sf = [f for f in obj.data.polygons if f.select == 1]
             v0 = Vector(obj.data.vertices[sf[0].vertices[0]].co)
             v1 = Vector(obj.data.vertices[sf[0].vertices[1]].co)
             v2 = Vector(obj.data.vertices[sf[0].vertices[2]].co)
             normal = (v1-v0).cross(v2-v0)
-            normal.normalize();            
+            normal.normalize();
             p = G3.closestP2S(c, v0, normal)
             self.mirror(cc, mat*p)
             return {'FINISHED'}
@@ -370,7 +370,7 @@ class VIEW3D_OT_cursor_to_plane(bpy.types.Operator):
         c = mati*Vector(CursorAccess.getCursor())
         q = None
         d = -1
-        for ff in obj.data.faces:
+        for ff in obj.data.polygons:
             if not ff.select:
                 continue
             qq = G3.closestP2S(c, Vector(obj.data.vertices[ff.vertices[0]].co), ff.normal)
@@ -420,7 +420,7 @@ class VIEW3D_OT_cursor_to_face(bpy.types.Operator):
         qqq = []
         q = None
         d = -1
-        for ff in obj.data.faces:
+        for ff in obj.data.polygons:
             if not ff.select:
                 continue
             fv=[]
@@ -504,7 +504,7 @@ class VIEW3D_OT_cursor_to_linex(bpy.types.Operator):
         if len(qq)==1:
             #print ("lx 1")
             q = qq[0]
-        
+
         if len(qq)==2:
             cc = context.scene.cursor_control
             cc.cycleLinexCoice(2)
@@ -545,7 +545,7 @@ class VIEW3D_OT_cursor_to_cylinderaxis(bpy.types.Operator):
         if(q==None):
             return {'CANCELLED'}
         cc.setDelta(mat*q)
-        return {'FINISHED'}     
+        return {'FINISHED'}
 
 
 class VIEW3D_OT_cursor_to_spherecenter(bpy.types.Operator):
@@ -852,18 +852,17 @@ class VIEW3D_OT_ccdelta_vvdist(bpy.types.Operator):
         if obj.data.total_vert_sel==0:
             if hasattr(context.scene, "cursor_memory"):
                 cm = context.scene.cursor_memory
-                
+
                 mesh = obj.data.vertices
                 mat = obj.matrix_world
                 mati = mat.copy()
                 mati.invert()
                 c = mati*Vector(CursorAccess.getCursor())
-                
+
                 v0 = Vector(cm.savedLocation)
                 v1 = Vector(c)
                 cc.deltaVector = v0-v1
-                
-                
+
         if obj.data.total_vert_sel==1:
             mesh = obj.data.vertices
             mat = obj.matrix_world
